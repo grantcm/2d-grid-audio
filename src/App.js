@@ -4,8 +4,8 @@ import waterAudioFile from './resources/water.wav';
 import zombieAudioFile from './resources/zombie.wav';
 //From: "Waterfall, Large, A.wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org
 import waterFallAudioFile from './resources/waterfall.wav'
-import Grid from './Grid';
-import './App.css';
+import Grid from './framework/Grid';
+import './style/App.css';
 
 class App extends Component {
   constructor(props) {

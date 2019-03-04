@@ -12,6 +12,14 @@ class Player {
         return new Player(pos);
     };
 
+    getPlayerX = () => {
+        return this.state.x;
+    };
+
+    getPlayerY = () => {
+        return this.state.y;
+    };
+
     getPlayerPosition = () => {
       return {
           x : this.state.x,

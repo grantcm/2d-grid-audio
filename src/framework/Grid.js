@@ -3,6 +3,8 @@ import Player from './Player.js';
 import GridSprite from './GridSprite.js';
 import GridController from "./GridController";
 
+import '../style/Grid.css';
+
 
 class Grid extends Component {
     constructor(props) {
@@ -33,7 +35,7 @@ class Grid extends Component {
         let newX = playerPosition.x + deltaX;
         let newY = playerPosition.y + deltaY;
 
-        if (0 <= newX <= this.state.maxX && 0 <= newY <= this.state.maxY) {
+        if (0 <= newX && newX < this.state.maxX && 0 <= newY && newY < this.state.maxY) {
             let updatedPlayer = this.state.player.setPosition({x: newX, y: newY});
             this.setState({
                 player: updatedPlayer,
@@ -78,12 +80,61 @@ class Grid extends Component {
         this.initAudio();
     }
 
+    findMatchingSprite = (x, y) => {
+        return this.state.gridSprites.find(function(sprite) {
+            return sprite.getSpriteX() === x && sprite.getSpriteY() === y;
+        });
+    };
+
+    generateGameBoard() {
+        let boardRows = [];
+        for(let i=0; i < this.state.maxX; i++){
+            let boardRow = [];
+
+            for(let j=0; j < this.state.maxY; j++) {
+                if (j === this.state.player.getPlayerX() && i === this.state.player.getPlayerY()){
+                    boardRow.push(
+                        <td>Player</td>
+                    );
+
+                    continue;
+                }
+
+                let sprite = this.findMatchingSprite(j, i);
+
+                if (sprite) {
+                    boardRow.push(
+                        <td>{sprite.getName()}</td>
+                    )
+                } else {
+                    boardRow.push(
+                        <td/>
+                    );
+                }
+
+            }
+
+            boardRows.push(
+                <tr>
+                    {boardRow}
+                </tr>
+
+            );
+        }
+
+        return boardRows;
+    }
 
 
     render() {
         return (
             <div>
                 <GridController gridCallback={this.updatePlayerPosition}/>
+                <table>
+                    <tbody>
+                        {this.generateGameBoard()}
+                    </tbody>
+                </table>
                 <p>{"Player position (" + this.state.player + ")"}</p>
                 <p>{"Sound position: (" + this.state.gridSprites.map(sprite => sprite.toString()).join() + ")"}</p>
             </div>

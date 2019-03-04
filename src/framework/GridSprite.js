@@ -42,6 +42,18 @@ class GridSprite extends Component {
         }
     };
 
+    getSpriteX = () => {
+        return this.state.x;
+    };
+
+    getSpriteY = () => {
+        return this.state.y;
+    };
+
+    getName = () => {
+        return this.state.name;
+    };
+
     updateAudioPos = () => {
         let playerPosition = this.state.playerPositionCallback();
         this.state.audio.pos(this.state.x - playerPosition.x, this.state.y - playerPosition.y, 1);
