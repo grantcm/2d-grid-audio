@@ -1,23 +1,16 @@
-import React, { Component } from 'react';
+import GridComponent from "./GridComponent";
 
-class Player {
+class Player extends GridComponent{
     constructor(props) {
+        super(props);
         this.state = {
-            x : props.x,
-            y : props.y,
+            x: props.x,
+            y: props.y,
         }
     }
 
     setPosition = (pos) => {
         return new Player(pos);
-    };
-
-    getPlayerX = () => {
-        return this.state.x;
-    };
-
-    getPlayerY = () => {
-        return this.state.y;
     };
 
     getPlayerPosition = () => {

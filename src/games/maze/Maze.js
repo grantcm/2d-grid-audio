@@ -1,33 +1,45 @@
-import React, { Component } from 'react';
-import Player from './Player.js';
-import GridSprite from './GridSprite.js';
-import GridController from "./GridController";
+import React from "react";
+import Grid from "../../framework/Grid";
+import GridComponent from "../../framework/GridComponent";
+import Player from "../../framework/Player";
+import GridSprite from "../../framework/GridSprite";
+import GridController from "../../framework/GridController";
+import generateMaze from "./MazeGenerator";
 
-import '../style/Grid.css';
-
-
-class Grid extends Component {
-    constructor(props) {
+class Maze extends React.Component {
+    constructor(props){
         super(props);
-
         this.state = {
             maxX: props.maxX,
             maxY: props.maxY,
             player: new Player({x: 0,y: 0}),
-            gridSprites: this.props.spriteVals.map(elm => new GridSprite(
+            gridSprites: props.spriteVals.map(elm => new GridSprite(
                 {
                     pos: elm.pos,
                     filename: elm.audioFile,
                     name: elm.name,
                     playerPositionCallback: this.getPlayerPosition,
                 })),
+            mazeMap: generateMaze(props.maxX, props.maxY),
         };
     }
 
-    setPlayerPosition = (pos) => {
-      this.state.player.setPosition(pos, () => {
-          this.state.gridSprites.forEach(sprite => sprite.updateAudioPos());
-      });
+    loadMaze = (maxX, maxY, spriteElms) => {
+
+        let maze = generateMaze(maxX, maxY);
+
+        for(let i = 0; i < maxX; i++) {
+            for(let j = 0; j < maxY; j++) {
+                let barrier = Math.floor(Math.random() * 100);
+                if(spriteElms.map(elm => elm.pos !== {x: j, y: i}) && barrier < 30){
+                    maze[j][i] = new GridComponent({x: j, y: i, impassable: true});
+                } else {
+                    maze[j][i] = new GridComponent({x: j, y: i, impassable: false});
+                }
+            }
+        }
+
+        return maze;
     };
 
     updatePlayerPosition = (deltaX, deltaY) => {
@@ -36,6 +48,8 @@ class Grid extends Component {
         let newY = playerPosition.y + deltaY;
 
         if (0 <= newX && newX < this.state.maxX && 0 <= newY && newY < this.state.maxY) {
+            if (this.state.mazeMap[newX][newY].isImpassable())
+                return;
             let updatedPlayer = this.state.player.setPosition({x: newX, y: newY});
             this.setState({
                 player: updatedPlayer,
@@ -43,21 +57,6 @@ class Grid extends Component {
                 this.state.gridSprites.forEach(sprite => sprite.updateAudioPos());
             });
         }
-    };
-
-    addGridSprite = (audioFile, pos, name) => {
-        this.setState({
-            gridSprites: this.state.gridSprites.concat(new GridSprite({
-                pos: pos,
-                filename: audioFile,
-                name: name,
-                playerPositionCallback: this.getPlayerPosition,
-            }))
-        })
-    };
-
-    getGridSprites = () => {
-        return this.state.gridSprites;
     };
 
     getPlayerPosition = () => {
@@ -88,28 +87,35 @@ class Grid extends Component {
         let boardRows = [];
         for(let i=0; i < this.state.maxX; i++){
             let boardRow = [];
-
             for(let j=0; j < this.state.maxY; j++) {
+                let cell = this.state.mazeMap[j][i];
+                let cellNeighbors = cell.getNeighbors();
+                let style = {};
+                cellNeighbors.forEach(neighbor => {
+                    let x = cell.getX();
+                    let y = cell.getY();
+                    if(x === neighbor.getX() - 1 && y === neighbor.getY()) {
+                        style["borderLeftStyle"] = "hidden";
+                    } else if(x === neighbor.getX() + 1 && y === neighbor.getY()) {
+                        style["borderRightStyle"] = "hidden";
+                    } else if(x === neighbor.getX() && y === neighbor.getY() - 1) {
+                        style["borderBottomStyle"] = "hidden";
+                    } else if(x === neighbor.getX() && y === neighbor.getY() + 1) {
+                        style["borderTopStyle"] = "hidden";
+                    }
+                });
+                
                 if (j === this.state.player.getComponentX() && i === this.state.player.getComponentY()){
                     boardRow.push(
-                        <td>Player</td>
+                        <td style={style}>Player</td>
                     );
-
-                    continue;
-                }
-
-                let sprite = this.findMatchingSprite(j, i);
-
-                if (sprite) {
+                } else if (this.findMatchingSprite(j, i)) {
                     boardRow.push(
-                        <td>{sprite.getName()}</td>
-                    )
+                        <td style={style}>{this.findMatchingSprite(j, i).getName()}</td>
+                    );
                 } else {
-                    boardRow.push(
-                        <td/>
-                    );
+                    boardRow.push(<td style={style}/>);
                 }
-
             }
 
             boardRows.push(
@@ -123,14 +129,13 @@ class Grid extends Component {
         return boardRows;
     }
 
-
     render() {
         return (
             <div>
                 <GridController gridCallback={this.updatePlayerPosition}/>
                 <table>
                     <tbody>
-                        {this.generateGameBoard()}
+                    {this.generateGameBoard()}
                     </tbody>
                 </table>
                 <p>{"Player position (" + this.state.player + ")"}</p>
@@ -140,4 +145,4 @@ class Grid extends Component {
     }
 }
 
-export default Grid;
+export default Maze;
