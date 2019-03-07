@@ -1,8 +1,5 @@
 import React from "react";
-import Grid from "../../framework/Grid";
-import GridComponent from "../../framework/GridComponent";
 import Player from "../../framework/Player";
-import GridSprite from "../../framework/GridSprite";
 import GridController from "../../framework/GridController";
 import generateMaze from "./MazeGenerator";
 
@@ -13,34 +10,9 @@ class Maze extends React.Component {
             maxX: props.maxX,
             maxY: props.maxY,
             player: new Player({x: 0,y: 0}),
-            gridSprites: props.spriteVals.map(elm => new GridSprite(
-                {
-                    pos: elm.pos,
-                    filename: elm.audioFile,
-                    name: elm.name,
-                    playerPositionCallback: this.getPlayerPosition,
-                })),
             mazeMap: generateMaze(props.maxX, props.maxY),
         };
     }
-
-    loadMaze = (maxX, maxY, spriteElms) => {
-
-        let maze = generateMaze(maxX, maxY);
-
-        for(let i = 0; i < maxX; i++) {
-            for(let j = 0; j < maxY; j++) {
-                let barrier = Math.floor(Math.random() * 100);
-                if(spriteElms.map(elm => elm.pos !== {x: j, y: i}) && barrier < 30){
-                    maze[j][i] = new GridComponent({x: j, y: i, impassable: true});
-                } else {
-                    maze[j][i] = new GridComponent({x: j, y: i, impassable: false});
-                }
-            }
-        }
-
-        return maze;
-    };
 
     updatePlayerPosition = (deltaX, deltaY) => {
         let playerPosition = this.state.player.getPlayerPosition();
@@ -61,8 +33,6 @@ class Maze extends React.Component {
             let updatedPlayer = this.state.player.setPosition({x: newX, y: newY});
             this.setState({
                 player: updatedPlayer,
-            }, () => {
-                this.state.gridSprites.forEach(sprite => sprite.updateAudioPos());
             });
         }
     };
@@ -73,22 +43,6 @@ class Maze extends React.Component {
 
     getPlayer = () => {
         return this.state.player;
-    };
-
-    initAudio = () => {
-        this.state.gridSprites.forEach(sprite => sprite.playAudio());
-    };
-
-
-
-    componentDidMount(){
-        this.initAudio();
-    }
-
-    findMatchingSprite = (x, y) => {
-        return this.state.gridSprites.find(function(sprite) {
-            return sprite.getSpriteX() === x && sprite.getSpriteY() === y;
-        });
     };
 
     generateGameBoard() {
@@ -117,10 +71,6 @@ class Maze extends React.Component {
                     boardRow.push(
                         <td style={style}>Player</td>
                     );
-                } else if (this.findMatchingSprite(j, i)) {
-                    boardRow.push(
-                        <td style={style}>{this.findMatchingSprite(j, i).getName()}</td>
-                    );
                 } else {
                     boardRow.push(<td style={style}/>);
                 }
@@ -147,7 +97,6 @@ class Maze extends React.Component {
                     </tbody>
                 </table>
                 <p>{"Player position (" + this.state.player + ")"}</p>
-                <p>{"Sound position: (" + this.state.gridSprites.map(sprite => sprite.toString()).join() + ")"}</p>
             </div>
         );
     }
