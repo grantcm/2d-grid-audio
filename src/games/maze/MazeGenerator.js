@@ -19,6 +19,7 @@ function generateMaze(x, y){
     let current = maze[0][0];
     current.visit();
     let unvisitedCells = x * y - 1;
+    
     while(unvisitedCells > 0) {
         let unvisitedNeighbors = getUnvisitedNeighbors(current, maze);
         if (unvisitedNeighbors.length > 0) {
@@ -27,6 +28,7 @@ function generateMaze(x, y){
 
             backtraceStack.push(current);
             current.addNeighbor(neighbor);
+            neighbor.addNeighbor(current);
             current = neighbor;
             current.visit();
             unvisitedCells--;
