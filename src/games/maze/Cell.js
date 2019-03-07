@@ -4,6 +4,7 @@ class Cell {
         this.x = x;
         this.y = y;
         this.neighbors = [];
+        this.distanceFromStart = 0;
     }
 
     addNeighbor(neighbor){
@@ -32,6 +33,14 @@ class Cell {
 
     getY(){
         return this.y;
+    }
+
+    setDistanceFromStart(distance){
+        this.distanceFromStart = distance;
+    }
+
+    getDistanceFromStart(){
+        return this.distanceFromStart;
     }
 }
 

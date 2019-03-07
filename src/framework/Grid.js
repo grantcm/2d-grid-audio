@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Player from './Player.js';
-import GridSprite from './GridSprite.js';
+import GridAudioSprite from './GridAudioSprite.js';
 import GridController from "./GridController";
 
 import '../style/Grid.css';
@@ -14,7 +14,7 @@ class Grid extends Component {
             maxX: props.maxX,
             maxY: props.maxY,
             player: new Player({x: 0,y: 0}),
-            gridSprites: this.props.spriteVals.map(elm => new GridSprite(
+            gridSprites: this.props.spriteVals.map(elm => new GridAudioSprite(
                 {
                     pos: elm.pos,
                     filename: elm.audioFile,
@@ -47,7 +47,7 @@ class Grid extends Component {
 
     addGridSprite = (audioFile, pos, name) => {
         this.setState({
-            gridSprites: this.state.gridSprites.concat(new GridSprite({
+            gridSprites: this.state.gridSprites.concat(new GridAudioSprite({
                 pos: pos,
                 filename: audioFile,
                 name: name,
@@ -71,8 +71,6 @@ class Grid extends Component {
     initAudio = () => {
         this.state.gridSprites.forEach(sprite => sprite.playAudio());
     };
-
-
 
     componentDidMount(){
         this.initAudio();

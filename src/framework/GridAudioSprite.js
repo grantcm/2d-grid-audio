@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Howl} from 'howler';
 import uuidv4 from 'uuidv4';
 
-class GridSprite extends Component {
+class GridAudioSprite extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -81,4 +81,4 @@ class GridSprite extends Component {
     }
 }
 
-export default GridSprite;
+export default GridAudioSprite;

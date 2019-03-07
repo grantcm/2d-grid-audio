@@ -29,6 +29,7 @@ function generateMaze(x, y){
             backtraceStack.push(current);
             current.addNeighbor(neighbor);
             neighbor.addNeighbor(current);
+            neighbor.setDistanceFromStart(current.getDistanceFromStart() + 1);
             current = neighbor;
             current.visit();
             unvisitedCells--;
@@ -36,8 +37,6 @@ function generateMaze(x, y){
             current = backtraceStack.pop();
         }
     }
-
-    console.log(maze);
 
     return maze;
 }

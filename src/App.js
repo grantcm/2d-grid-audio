@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import {Howl, Howler} from 'howler';
-import waterAudioFile from './resources/water.wav';
 import zombieAudioFile from './resources/zombie.wav';
 //From: "Waterfall, Large, A.wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org
-import waterFallAudioFile from './resources/waterfall.wav'
-import Grid from './framework/Grid';
+import MazeComponent from './games/maze/MazeComponent';
+import waterFallAudioFile from './resources/waterfall.wav';
 import './style/App.css';
-import Maze from "./games/maze/Maze";
+import Grid from "./framework/Grid";
 
 class App extends Component {
   constructor(props) {
@@ -39,7 +37,7 @@ class App extends Component {
   render() {
     return (
       <div className="body">
-          <Maze maxX={this.state.maxX} maxY={this.state.maxY}/>
+          <MazeComponent maxX={this.state.maxX} maxY={this.state.maxY}/>
           {/*<Grid maxX={this.state.maxX} maxY={this.state.maxY} spriteVals={this.state.spriteVals}/>*/}
       </div>
     );
