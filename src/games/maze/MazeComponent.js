@@ -4,7 +4,9 @@ import Maze from "./Maze";
 import GridController from "../../framework/GridController";
 import '../../style/Grid.css';
 import Beep from "../../resources/beep.wav";
+import Bump from "../../resources/bump.wav";
 import MazeAudioSprite from "./MazeAudioSprite";
+import {Howl} from "howler";
 
 
 class MazeComponent extends React.Component {
@@ -13,7 +15,10 @@ class MazeComponent extends React.Component {
         this.state = {
             player: new Player({x: 0,y: 0}),
             maze: new Maze({maxX: props.maxX, maxY: props.maxY}),
-            audioSprites:  []
+            audioSprites:  [],
+            bumpSound: new Howl({
+                src: [Bump],
+            }),
         };
     }
 
@@ -30,8 +35,10 @@ class MazeComponent extends React.Component {
                 return cell.getX() === newX && cell.getY() === newY;
             });
 
-            if(validMove.length === 0)
+            if(validMove.length === 0) {
+                this.state.bumpSound.play();
                 return;
+            }
 
             let updatedPlayer = this.state.player.setPosition({x: newX, y: newY});
             this.setState({
@@ -126,6 +133,10 @@ class MazeComponent extends React.Component {
         this.state.audioSprites.forEach(sprite => sprite.play1DAudio());
     };
 
+    handleSpaceBarPress = () => {
+        this.state.audioSprites.forEach(sprite => sprite.play1DAudio());
+    };
+
     componentDidMount(){
         this.addGridSprite(Beep, "Finish");
     }
@@ -133,7 +144,7 @@ class MazeComponent extends React.Component {
     render() {
         return (
             <div>
-                <GridController gridCallback={this.updatePlayerPosition}/>
+                <GridController gridCallback={this.updatePlayerPosition} spaceBarCallback={this.handleSpaceBarPress}/>
                 <table>
                     <tbody>
                         {this.generateGameBoard()}

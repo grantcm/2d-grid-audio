@@ -22,6 +22,12 @@ class GridController extends React.Component {
         this.props.gridCallback(0, -1);
     };
 
+    spaceBar = () => {
+        if(!this.props.spaceBarCallback)
+            return;
+        this.props.spaceBarCallback();
+    };
+
     arrowKeyListener = (e) => {
         let key = e.keyCode ? e.keyCode : e.which;
         switch(key) {
@@ -48,6 +54,9 @@ class GridController extends React.Component {
                 break;
             case 68:
                 this.moveRight();
+                break;
+            case 32:
+                this.spaceBar();
                 break;
             default:
         }

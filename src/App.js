@@ -10,8 +10,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        maxX: 10,
-        maxY: 10,
+        maxX: 5,
+        maxY: 5,
         spriteVals: [
             {
                 pos: this.getRandomPos(10, 10),

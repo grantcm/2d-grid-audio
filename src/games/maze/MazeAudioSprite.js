@@ -10,7 +10,6 @@ class MazeAudioSprite extends React.Component {
             currentPositionCallback: props.currentPositionCallback,
             audio: new Howl({
                 src: [props.filename],
-                loop: true,
             }),
             name: props.name,
             uuid: uuidv4(),
