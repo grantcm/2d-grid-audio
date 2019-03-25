@@ -5,6 +5,7 @@ import GridController from "../../framework/GridController";
 import '../../style/Grid.css';
 import Beep from "../../resources/beep.wav";
 import Bump from "../../resources/bump.wav";
+import Win from "../../resources/win-trumpets.mp3"
 import MazeAudioSprite from "./MazeAudioSprite";
 import {Howl} from "howler";
 
@@ -18,6 +19,9 @@ class MazeComponent extends React.Component {
             audioSprites:  [],
             bumpSound: new Howl({
                 src: [Bump],
+            }),
+            winSound: new Howl({
+                src: [Win],
             }),
         };
     }
@@ -45,7 +49,18 @@ class MazeComponent extends React.Component {
                 player: updatedPlayer,
             },() => {
                 this.state.audioSprites.forEach(sprite => sprite.update1DAudioPos());
+                this.checkIfGameOver();
             });
+        } else {
+            this.state.bumpSound.play();
+        }
+    };
+
+    checkIfGameOver = () => {
+        let finalCell = this.state.maze.getFinalCell();
+        let playerPosition = this.state.player.getPlayerPosition();
+        if (playerPosition.x === finalCell.getX() && playerPosition.y === finalCell.getY()) {
+            this.state.winSound.play();
         }
     };
 
@@ -139,6 +154,10 @@ class MazeComponent extends React.Component {
 
     componentDidMount(){
         this.addGridSprite(Beep, "Finish");
+        let startCell = this.state.maze.getStartCell();
+        this.setState({
+           player: new Player({x: startCell.getX(), y: startCell.getY()}),
+        });
     }
 
     render() {
