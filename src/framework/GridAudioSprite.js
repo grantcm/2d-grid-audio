@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {Howl} from 'howler';
 import uuidv4 from 'uuidv4';
 
-class GridAudioSprite extends Component {
+class GridAudioSprite extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

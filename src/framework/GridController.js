@@ -2,9 +2,6 @@ import React from 'react';
 
 
 class GridController extends React.Component {
-    constructor(props){
-        super(props)
-    }
 
     moveUp = () => {
         this.props.gridCallback(0, 1);
