@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import Player from './Player.js';
 import GridAudioSprite from './GridAudioSprite.js';
 import GridController from "./GridController";
+import GridCell from "./GridCell";
 
 import '../style/Grid.css';
+import MazeCell from "../games/maze/MazeCell";
 
 
 class Grid extends Component {
@@ -14,6 +16,7 @@ class Grid extends Component {
             maxX: props.maxX,
             maxY: props.maxY,
             player: new Player({x: 0,y: 0}),
+            grid: this.initializeGrid(props.maxX, props.maxY),
             gridSprites: this.props.spriteVals.map(elm => new GridAudioSprite(
                 {
                     pos: elm.pos,
@@ -22,7 +25,28 @@ class Grid extends Component {
                     playerPositionCallback: this.getPlayerPosition,
                 })),
         };
+
+        this.addItemsToGrid();
     }
+
+    /**
+     * Creates a 2D array that represents the grid
+     * @param x width
+     * @param y height
+     * @returns any[] 2D array object grid
+     */
+    initializeGrid = (x, y) => {
+        let grid = new Array(x);
+
+        for (let i = 0; i < x; i++) {
+            grid[i] = new Array(y);
+            for (let j = 0; j < y; j++) {
+                grid[i][j] = new GridCell(i, j);
+            }
+        }
+
+        return grid;
+    };
 
     setPlayerPosition = (pos) => {
       this.state.player.setPosition(pos, () => {
@@ -30,6 +54,11 @@ class Grid extends Component {
       });
     };
 
+    /**
+     * Updates the player position in the state and on the board
+     * @param deltaX
+     * @param deltaY
+     */
     updatePlayerPosition = (deltaX, deltaY) => {
         let playerPosition = this.state.player.getPlayerPosition();
         let newX = playerPosition.x + deltaX;
@@ -37,8 +66,16 @@ class Grid extends Component {
 
         if (0 <= newX && newX < this.state.maxX && 0 <= newY && newY < this.state.maxY) {
             let updatedPlayer = this.state.player.setPosition({x: newX, y: newY});
+            let updatedGrid = this.state.grid.map(function(arr) {
+                return arr.slice();
+            });
+
+            updatedGrid[playerPosition.y][playerPosition.x].removeObject(this.state.player);
+            updatedGrid[newY][newX].addObjects(updatedPlayer);
+
             this.setState({
                 player: updatedPlayer,
+                grid: updatedGrid,
             }, () => {
                 this.state.gridSprites.forEach(sprite => sprite.updateAudioPos());
             });
@@ -82,26 +119,33 @@ class Grid extends Component {
         });
     };
 
+    addItemsToGrid = () => {
+        let PlayerPosition = this.state.player.getPlayerPosition();
+        this.state.grid[PlayerPosition.x][PlayerPosition.y].addObjects(this.state.player);
+        this.state.gridSprites.forEach(
+            sprite =>
+            this.state.grid[sprite.getSpriteX()][sprite.getSpriteY()].addObjects(sprite)
+        );
+    };
+
     generateGameBoard() {
         let boardRows = [];
-        for(let i=0; i < this.state.maxX; i++){
+        for(let i=0; i < this.state.grid.length; i++){
             let boardRow = [];
 
-            for(let j=0; j < this.state.maxY; j++) {
-                if (j === this.state.player.getComponentX() && i === this.state.player.getComponentY()){
-                    boardRow.push(
-                        <td>Player</td>
-                    );
-
-                    continue;
-                }
-
-                let sprite = this.findMatchingSprite(j, i);
-
-                if (sprite) {
-                    boardRow.push(
-                        <td>{sprite.getName()}</td>
-                    )
+            for(let j=0; j < this.state.grid[i].length; j++) {
+                if (this.state.grid[i][j].objects.length !== 0) {
+                    let objects = this.state.grid[i][j].objects;
+                    if(objects.length === 1) {
+                        boardRow.push(
+                            <td>{objects[0].getName()}</td>
+                        );
+                    } else if (objects.length > 1) {
+                        let content = objects.map(object => object.getName());
+                        boardRow.push(
+                            <td>{content.join("\n")}</td>
+                        );
+                    }
                 } else {
                     boardRow.push(
                         <td/>

@@ -25,7 +25,7 @@ class Maze {
 
     /**
      * Final cell will always be the top left corner
-     * @returns Cell at top left corner
+     * @returns MazeCell at top left corner
      */
     getFinalCell = () => {
         if(this.finalCell === null)
@@ -35,7 +35,7 @@ class Maze {
 
     /**
      * Returns the cell that is furthest away from the finish point
-     * @returns Starting Cell
+     * @returns Starting MazeCell
      */
     getStartCell = () => {
         if(this.startCell === null)

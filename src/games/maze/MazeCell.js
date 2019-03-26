@@ -1,4 +1,4 @@
-class Cell {
+class MazeCell {
     constructor(x, y){
         this.visited = false;
         this.x = x;
@@ -44,4 +44,4 @@ class Cell {
     }
 }
 
-export default Cell;
+export default MazeCell;
