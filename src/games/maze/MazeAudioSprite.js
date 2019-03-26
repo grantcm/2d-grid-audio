@@ -10,7 +10,6 @@ class MazeAudioSprite extends React.Component {
             currentPositionCallback: props.currentPositionCallback,
             audio: new Howl({
                 src: [props.filename],
-                loop: true,
             }),
             name: props.name,
             uuid: uuidv4(),
@@ -55,7 +54,12 @@ class MazeAudioSprite extends React.Component {
 
     update1DAudioPos = () => {
         let current = this.state.currentPositionCallback(), final = this.state.finalPositionCallback();
-        this.state.audio.pos(final.getDistanceFromStart() - current.getDistanceFromStart(), 0, 1);
+        let audioVolume = this.audioScaling(current.getDistanceFromStart(), final.getDistanceFromStart());
+        this.state.audio.pos(audioVolume, 0, 1);
+    };
+
+    audioScaling = (start, finish) => {
+        return Math.pow(start - finish, 1);
     };
 
     playAudio = () => {

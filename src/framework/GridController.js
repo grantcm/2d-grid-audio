@@ -2,9 +2,6 @@ import React from 'react';
 
 
 class GridController extends React.Component {
-    constructor(props){
-        super(props)
-    }
 
     moveUp = () => {
         this.props.gridCallback(0, 1);
@@ -20,6 +17,12 @@ class GridController extends React.Component {
 
     moveDown = () => {
         this.props.gridCallback(0, -1);
+    };
+
+    spaceBar = () => {
+        if(!this.props.spaceBarCallback)
+            return;
+        this.props.spaceBarCallback();
     };
 
     arrowKeyListener = (e) => {
@@ -48,6 +51,9 @@ class GridController extends React.Component {
                 break;
             case 68:
                 this.moveRight();
+                break;
+            case 32:
+                this.spaceBar();
                 break;
             default:
         }

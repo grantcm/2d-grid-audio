@@ -4,7 +4,10 @@ import Maze from "./Maze";
 import GridController from "../../framework/GridController";
 import '../../style/Grid.css';
 import Beep from "../../resources/beep.wav";
+import Bump from "../../resources/bump.wav";
+import Win from "../../resources/win-trumpets.mp3"
 import MazeAudioSprite from "./MazeAudioSprite";
+import {Howl} from "howler";
 
 
 class MazeComponent extends React.Component {
@@ -13,7 +16,13 @@ class MazeComponent extends React.Component {
         this.state = {
             player: new Player({x: 0,y: 0}),
             maze: new Maze({maxX: props.maxX, maxY: props.maxY}),
-            audioSprites:  []
+            audioSprites:  [],
+            bumpSound: new Howl({
+                src: [Bump],
+            }),
+            winSound: new Howl({
+                src: [Win],
+            }),
         };
     }
 
@@ -30,15 +39,28 @@ class MazeComponent extends React.Component {
                 return cell.getX() === newX && cell.getY() === newY;
             });
 
-            if(validMove.length === 0)
+            if(validMove.length === 0) {
+                this.state.bumpSound.play();
                 return;
+            }
 
             let updatedPlayer = this.state.player.setPosition({x: newX, y: newY});
             this.setState({
                 player: updatedPlayer,
             },() => {
                 this.state.audioSprites.forEach(sprite => sprite.update1DAudioPos());
+                this.checkIfGameOver();
             });
+        } else {
+            this.state.bumpSound.play();
+        }
+    };
+
+    checkIfGameOver = () => {
+        let finalCell = this.state.maze.getFinalCell();
+        let playerPosition = this.state.player.getPlayerPosition();
+        if (playerPosition.x === finalCell.getX() && playerPosition.y === finalCell.getY()) {
+            this.state.winSound.play();
         }
     };
 
@@ -126,14 +148,22 @@ class MazeComponent extends React.Component {
         this.state.audioSprites.forEach(sprite => sprite.play1DAudio());
     };
 
+    handleSpaceBarPress = () => {
+        this.state.audioSprites.forEach(sprite => sprite.play1DAudio());
+    };
+
     componentDidMount(){
         this.addGridSprite(Beep, "Finish");
+        let startCell = this.state.maze.getStartCell();
+        this.setState({
+           player: new Player({x: startCell.getX(), y: startCell.getY()}),
+        });
     }
 
     render() {
         return (
             <div>
-                <GridController gridCallback={this.updatePlayerPosition}/>
+                <GridController gridCallback={this.updatePlayerPosition} spaceBarCallback={this.handleSpaceBarPress}/>
                 <table>
                     <tbody>
                         {this.generateGameBoard()}

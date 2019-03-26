@@ -1,4 +1,3 @@
-import React from "react";
 import generateMaze from "./MazeGenerator";
 
 class Maze {
@@ -7,6 +6,7 @@ class Maze {
         this.maxY = props.maxY;
         this.mazeMap = generateMaze(props.maxX, props.maxY);
         this.finalCell = null;
+        this.startCell = null;
     }
 
     getLongestPath = () => {
@@ -22,10 +22,25 @@ class Maze {
         return cell;
     };
 
+
+    /**
+     * Final cell will always be the top left corner
+     * @returns Cell at top left corner
+     */
     getFinalCell = () => {
         if(this.finalCell === null)
-            this.finalCell = this.getLongestPath();
+            this.finalCell = this.mazeMap[0][0];
         return this.finalCell;
+    };
+
+    /**
+     * Returns the cell that is furthest away from the finish point
+     * @returns Starting Cell
+     */
+    getStartCell = () => {
+        if(this.startCell === null)
+            this.startCell = this.getLongestPath();
+        return this.startCell;
     };
 
     getCellAt = (x, y) => {
