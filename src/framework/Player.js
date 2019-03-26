@@ -20,6 +20,10 @@ class Player extends GridComponent{
       }
     };
 
+    getName(){
+        return "Player";
+    }
+
     toString(){
         return `Player : (${this.state.x}, ${this.state.y})`;
     }

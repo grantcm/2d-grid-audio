@@ -4,14 +4,14 @@
  * @param y - max dimension y
  * @returns 2d Array of cells with neighbors
  */
-import Cell from "./Cell";
+import MazeCell from "./MazeCell";
 
 function generateMaze(x, y){
     let maze = new Array(x);
     for (let i = 0; i < x; i++) {
         maze[i] = new Array(y);
         for (let j = 0; j < y; j++) {
-            maze[i][j] = new Cell(i, j);
+            maze[i][j] = new MazeCell(i, j);
         }
     }
 
