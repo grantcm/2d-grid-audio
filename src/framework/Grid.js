@@ -15,7 +15,7 @@ class Grid extends Component {
         this.state = {
             maxX: props.maxX,
             maxY: props.maxY,
-            player: new Player({x: 0,y: 0}),
+            player: new Player({ x: 0, y: 0 }),
             grid: this.initializeGrid(props.maxX, props.maxY),
             gridSprites: this.props.spriteVals.map(elm => new GridAudioSprite(
                 {
@@ -49,9 +49,9 @@ class Grid extends Component {
     };
 
     setPlayerPosition = (pos) => {
-      this.state.player.setPosition(pos, () => {
-          this.state.gridSprites.forEach(sprite => sprite.updateAudioPos());
-      });
+        this.state.player.setPosition(pos, () => {
+            this.state.gridSprites.forEach(sprite => sprite.updateAudioPos());
+        });
     };
 
     /**
@@ -65,13 +65,13 @@ class Grid extends Component {
         let newY = playerPosition.y + deltaY;
 
         if (0 <= newX && newX < this.state.maxX && 0 <= newY && newY < this.state.maxY) {
-            let updatedPlayer = this.state.player.setPosition({x: newX, y: newY});
-            let updatedGrid = this.state.grid.map(function(arr) {
+            let updatedPlayer = this.state.player.setPosition({ x: newX, y: newY });
+            let updatedGrid = this.state.grid.map(function (arr) {
                 return arr.slice();
             });
 
-            updatedGrid[playerPosition.y][playerPosition.x].removeObject(this.state.player);
-            updatedGrid[newY][newX].addObjects(updatedPlayer);
+            updatedGrid[playerPosition.x][playerPosition.y].removeObject(this.state.player);
+            updatedGrid[newX][newY].addObjects(updatedPlayer);
 
             this.setState({
                 player: updatedPlayer,
@@ -109,34 +109,52 @@ class Grid extends Component {
         this.state.gridSprites.forEach(sprite => sprite.playAudio());
     };
 
-    componentDidMount(){
+    componentDidMount() {
         this.initAudio();
     }
 
-    findMatchingSprite = (x, y) => {
-        return this.state.gridSprites.find(function(sprite) {
-            return sprite.getSpriteX() === x && sprite.getSpriteY() === y;
-        });
+    findMatchingSprites = (x, y) => {
+        return this.state.grid[x][y].getObjects();
     };
 
     addItemsToGrid = () => {
-        let PlayerPosition = this.state.player.getPlayerPosition();
-        this.state.grid[PlayerPosition.x][PlayerPosition.y].addObjects(this.state.player);
+        let playerPosition = this.state.player.getPlayerPosition();
+        this.state.grid[playerPosition.x][playerPosition.y].addObjects(this.state.player);
         this.state.gridSprites.forEach(
             sprite =>
-            this.state.grid[sprite.getSpriteX()][sprite.getSpriteY()].addObjects(sprite)
+                this.state.grid[sprite.getSpriteX()][sprite.getSpriteY()].addObjects(sprite)
         );
     };
 
+    doAction = () => {
+        let playerPosition = this.state.player.getPlayerPosition();
+        console.log(playerPosition);
+        let currentSprites = this.findMatchingSprites(playerPosition.x, playerPosition.y);
+        let grid = this.state.grid;
+        let updatedGridSprites = this.state.gridSprites
+
+        currentSprites.forEach(function (sprite) {
+            if (sprite.getName() === "Crow") {
+                grid[playerPosition.x][playerPosition.y].removeObject(sprite);
+                sprite.componentWillUnmount();
+                let index = updatedGridSprites.indexOf(sprite);
+                updatedGridSprites = updatedGridSprites.splice(index, 1);
+            }
+        });
+        this.setState({
+            GridSprites: updatedGridSprites,
+        });
+    }
+
     generateGameBoard() {
         let boardRows = [];
-        for(let i=0; i < this.state.grid.length; i++){
+        for (let i = 0; i < this.state.grid.length; i++) {
             let boardRow = [];
 
-            for(let j=0; j < this.state.grid[i].length; j++) {
+            for (let j = 0; j < this.state.grid[i].length; j++) {
                 if (this.state.grid[i][j].objects.length !== 0) {
                     let objects = this.state.grid[i][j].objects;
-                    if(objects.length === 1) {
+                    if (objects.length === 1) {
                         boardRow.push(
                             <td>{objects[0].getName()}</td>
                         );
@@ -148,7 +166,7 @@ class Grid extends Component {
                     }
                 } else {
                     boardRow.push(
-                        <td/>
+                        <td />
                     );
                 }
 
@@ -169,7 +187,7 @@ class Grid extends Component {
     render() {
         return (
             <div>
-                <GridController gridCallback={this.updatePlayerPosition}/>
+                <GridController gridCallback={this.updatePlayerPosition} spaceBarCallback={this.doAction} />
                 <table>
                     <tbody>
                         {this.generateGameBoard()}

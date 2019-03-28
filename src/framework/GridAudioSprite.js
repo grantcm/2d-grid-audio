@@ -34,6 +34,10 @@ class GridAudioSprite extends React.Component {
         }, this.updateAudioPos())
     };
 
+    setLoop = (bool) => {
+        this.audio.loop(bool);
+    };
+
 
     getGridSpritePosition = () => {
         return {

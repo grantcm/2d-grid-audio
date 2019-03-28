@@ -9,6 +9,10 @@ class GridCell {
         this.objects = this.objects.concat(objects);
     }
 
+    getObjects() {
+        return this.objects;
+    }
+
     removeObject(object) {
         let index = this.objects.findIndex(item => {
            return object === item;

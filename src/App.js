@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-import zombieAudioFile from './resources/zombie.wav';
-//From: "Waterfall, Large, A.wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org
-import MazeComponent from './games/maze/MazeComponent';
-import waterFallAudioFile from './resources/waterfall.wav';
+import crowAudioFile from './resources/crow.wav';
 import './style/App.css';
 import Grid from "./framework/Grid";
 
@@ -10,19 +7,19 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        maxX: 10,
-        maxY: 10,
+        maxX: 5,
+        maxY: 1,
         spriteVals: [
             {
-                pos: this.getRandomPos(10, 10),
-                audioFile: waterFallAudioFile,
-                name: "Waterfall",
+                pos: this.getRandomPos(5, 1),
+                audioFile: crowAudioFile,
+                name: "Crow",
             },
             {
-                pos: this.getRandomPos(10, 10),
-                audioFile: zombieAudioFile,
-                name: "Zombie",
-            }
+              pos: this.getRandomPos(5, 1),
+              audioFile: crowAudioFile,
+              name: "Crow",
+          },
         ],
     }
   }
